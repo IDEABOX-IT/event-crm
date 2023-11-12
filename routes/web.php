@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\CheckingController;
 use App\Http\Controllers\ContactsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ImagesController;
@@ -20,6 +21,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Unauthenticated routes
+
 // Auth
 
 Route::get('login', [AuthenticatedSessionController::class, 'create'])
@@ -32,6 +35,17 @@ Route::post('login', [AuthenticatedSessionController::class, 'store'])
 
 Route::delete('logout', [AuthenticatedSessionController::class, 'destroy'])
     ->name('logout');
+
+// Images
+
+Route::get('/img/{path}', [ImagesController::class, 'show'])
+    ->where('path', '.*')
+    ->name('image');
+
+// QrCode
+// TODO route used only to check if QrCode its created or not
+Route::get('qrCode', [CheckingController::class, 'generateQrCode'])
+    ->name('qrcode');
 
 // Dashboard
 
@@ -134,9 +148,3 @@ Route::put('contacts/{contact}/restore', [ContactsController::class, 'restore'])
 Route::get('reports', [ReportsController::class, 'index'])
     ->name('reports')
     ->middleware('auth');
-
-// Images
-
-Route::get('/img/{path}', [ImagesController::class, 'show'])
-    ->where('path', '.*')
-    ->name('image');
