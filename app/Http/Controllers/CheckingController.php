@@ -2,13 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Enumerations\LogLevelEnum;
-use App\Logging\LogMaker;
-use App\Models\QrCodeModel;
 use App\Services\QrCodeService;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-
 
 class CheckingController extends Controller
 {
@@ -16,6 +11,11 @@ class CheckingController extends Controller
     {
         $qrCodePath = 'public/qrCodes/make_me_qrcode.png';
         $this->createQrCode('make_me_qrcode', $qrCodePath);
+    }
+
+    private function createQrCode(string $value, string $qrCodePath): void
+    {
+        QrCodeService::create($value, $qrCodePath);
     }
 
     public function getQrCode(): string
@@ -30,12 +30,8 @@ class CheckingController extends Controller
         return $this->getBase64QrCode($qrCodePath);
     }
 
-    private function createQrCode(string $value, string $qrCodePath): void
-    {
-        QrCodeService::create($value, $qrCodePath);
-    }
-
     // TODO maybe helper function ?
+
     private function getBase64QrCode(string $qrCodePath): string
     {
         $qrCodeImageContents = file_get_contents(storage_path('app/' . $qrCodePath));
