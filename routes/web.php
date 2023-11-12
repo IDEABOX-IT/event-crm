@@ -47,6 +47,9 @@ Route::get('/img/{path}', [ImagesController::class, 'show'])
 Route::get('qrCode', [CheckingController::class, 'generateQrCode'])
     ->name('qrcode');
 
+Route::get('getQrCode', [CheckingController::class, 'getQrCode'])
+    ->name('getQrCode');
+
 // Dashboard
 
 Route::get('/', [DashboardController::class, 'index'])
