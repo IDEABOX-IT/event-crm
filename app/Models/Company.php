@@ -4,16 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Account extends Model
+class Company extends Model
 {
     public function users()
     {
         return $this->hasMany(User::class);
     }
 
-    public function organizations()
+    public function events()
     {
-        return $this->hasMany(Organization::class);
+        return $this->hasMany(Event::class);
     }
 
     public function contacts()

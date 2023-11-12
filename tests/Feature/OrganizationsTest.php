@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\Account;
+use App\Models\Company;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\Assert;
@@ -17,14 +17,14 @@ class OrganizationsTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->create([
-            'account_id' => Account::create(['name' => 'Acme Corporation'])->id,
+            'company_id' => Company::create(['name' => 'Acme Corporation'])->id,
             'first_name' => 'John',
             'last_name' => 'Doe',
             'email' => 'johndoe@example.com',
             'owner' => true,
         ]);
 
-        $this->user->account->organizations()->createMany([
+        $this->user->account->events()->createMany([
             [
                 'name' => 'Apple',
                 'email' => 'info@apple.com',
@@ -47,12 +47,12 @@ class OrganizationsTest extends TestCase
         ]);
     }
 
-    public function test_can_view_organizations()
+    public function test_can_view_events()
     {
         $this->actingAs($this->user)
             ->get('/organizations')
             ->assertInertia(fn (Assert $assert) => $assert
-                ->component('Organizations/Index')
+                ->component('Event/Index')
                 ->has('organizations.data', 2)
                 ->has('organizations.data.0', fn (Assert $assert) => $assert
                     ->where('id', 1)
@@ -71,12 +71,12 @@ class OrganizationsTest extends TestCase
             );
     }
 
-    public function test_can_search_for_organizations()
+    public function test_can_search_for_events()
     {
         $this->actingAs($this->user)
             ->get('/organizations?search=Apple')
             ->assertInertia(fn (Assert $assert) => $assert
-                ->component('Organizations/Index')
+                ->component('Event/Index')
                 ->where('filters.search', 'Apple')
                 ->has('organizations.data', 1)
                 ->has('organizations.data.0', fn (Assert $assert) => $assert
@@ -89,27 +89,27 @@ class OrganizationsTest extends TestCase
             );
     }
 
-    public function test_cannot_view_deleted_organizations()
+    public function test_cannot_view_deleted_events()
     {
-        $this->user->account->organizations()->firstWhere('name', 'Microsoft')->delete();
+        $this->user->account->events()->firstWhere('name', 'Microsoft')->delete();
 
         $this->actingAs($this->user)
             ->get('/organizations')
             ->assertInertia(fn (Assert $assert) => $assert
-                ->component('Organizations/Index')
+                ->component('Event/Index')
                 ->has('organizations.data', 1)
                 ->where('organizations.data.0.name', 'Apple')
             );
     }
 
-    public function test_can_filter_to_view_deleted_organizations()
+    public function test_can_filter_to_view_deleted_events()
     {
-        $this->user->account->organizations()->firstWhere('name', 'Microsoft')->delete();
+        $this->user->account->events()->firstWhere('name', 'Microsoft')->delete();
 
         $this->actingAs($this->user)
             ->get('/organizations?trashed=with')
             ->assertInertia(fn (Assert $assert) => $assert
-                ->component('Organizations/Index')
+                ->component('Event/Index')
                 ->has('organizations.data', 2)
                 ->where('organizations.data.0.name', 'Apple')
                 ->where('organizations.data.1.name', 'Microsoft')

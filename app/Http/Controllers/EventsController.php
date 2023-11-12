@@ -2,41 +2,41 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Organization;
+use App\Models\Event;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
 
-class OrganizationsController extends Controller
+class EventsController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Organizations/Index', [
+        return Inertia::render('Events/Index', [
             'filters' => Request::all('search', 'trashed'),
-            'organizations' => Auth::user()->account->organizations()
+            'events' => Auth::user()->company->events()
                 ->orderBy('name')
                 ->filter(Request::only('search', 'trashed'))
                 ->paginate(10)
                 ->withQueryString()
-                ->through(fn ($organization) => [
-                    'id' => $organization->id,
-                    'name' => $organization->name,
-                    'phone' => $organization->phone,
-                    'city' => $organization->city,
-                    'deleted_at' => $organization->deleted_at,
+                ->through(fn ($event) => [
+                    'id' => $event->id,
+                    'name' => $event->name,
+                    'phone' => $event->phone,
+                    'city' => $event->city,
+                    'deleted_at' => $event->deleted_at,
                 ]),
         ]);
     }
 
     public function create()
     {
-        return Inertia::render('Organizations/Create');
+        return Inertia::render('Events/Create');
     }
 
     public function store()
     {
-        Auth::user()->account->organizations()->create(
+        Auth::user()->account->events()->create(
             Request::validate([
                 'name' => ['required', 'max:100'],
                 'email' => ['nullable', 'max:50', 'email'],
@@ -49,29 +49,29 @@ class OrganizationsController extends Controller
             ])
         );
 
-        return Redirect::route('organizations')->with('success', 'Organization created.');
+        return Redirect::route('events')->with('success', 'Evento criado.');
     }
 
-    public function edit(Organization $organization)
+    public function edit(Event $event)
     {
-        return Inertia::render('Organizations/Edit', [
-            'organization' => [
-                'id' => $organization->id,
-                'name' => $organization->name,
-                'email' => $organization->email,
-                'phone' => $organization->phone,
-                'address' => $organization->address,
-                'city' => $organization->city,
-                'region' => $organization->region,
-                'country' => $organization->country,
-                'postal_code' => $organization->postal_code,
-                'deleted_at' => $organization->deleted_at,
-                'contacts' => $organization->contacts()->orderByName()->get()->map->only('id', 'name', 'city', 'phone'),
+        return Inertia::render('Events/Edit', [
+            'event' => [
+                'id' => $event->id,
+                'name' => $event->name,
+                'email' => $event->email,
+                'phone' => $event->phone,
+                'address' => $event->address,
+                'city' => $event->city,
+                'region' => $event->region,
+                'country' => $event->country,
+                'postal_code' => $event->postal_code,
+                'deleted_at' => $event->deleted_at,
+                'contacts' => $event->contacts()->orderByName()->get()->map->only('id', 'name', 'city', 'phone'),
             ],
         ]);
     }
 
-    public function update(Organization $organization)
+    public function update(Event $organization)
     {
         $organization->update(
             Request::validate([
@@ -89,14 +89,14 @@ class OrganizationsController extends Controller
         return Redirect::back()->with('success', 'Organization updated.');
     }
 
-    public function destroy(Organization $organization)
+    public function destroy(Event $organization)
     {
         $organization->delete();
 
         return Redirect::back()->with('success', 'Organization deleted.');
     }
 
-    public function restore(Organization $organization)
+    public function restore(Event $organization)
     {
         $organization->restore();
 

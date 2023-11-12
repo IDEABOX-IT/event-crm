@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\Account;
+use App\Models\Company;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\Assert;
@@ -17,18 +17,18 @@ class ContactsTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->create([
-            'account_id' => Account::create(['name' => 'Acme Corporation'])->id,
+            'company_id' => Company::create(['name' => 'Acme Corporation'])->id,
             'first_name' => 'John',
             'last_name' => 'Doe',
             'email' => 'johndoe@example.com',
             'owner' => true,
         ]);
 
-        $organization = $this->user->account->organizations()->create(['name' => 'Example Organization Inc.']);
+        $organization = $this->user->account->events()->create(['name' => 'Example Organization Inc.']);
 
         $this->user->account->contacts()->createMany([
             [
-                'organization_id' => $organization->id,
+                'event_id' => $organization->id,
                 'first_name' => 'Martin',
                 'last_name' => 'Abbott',
                 'email' => 'martin.abbott@example.com',
@@ -39,7 +39,7 @@ class ContactsTest extends TestCase
                 'country' => 'US',
                 'postal_code' => '57851',
             ], [
-                'organization_id' => $organization->id,
+                'event_id' => $organization->id,
                 'first_name' => 'Lynn',
                 'last_name' => 'Kub',
                 'email' => 'lynn.kub@example.com',

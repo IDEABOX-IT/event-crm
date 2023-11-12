@@ -16,9 +16,9 @@ class Contact extends Model
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
     }
 
-    public function organization()
+    public function event()
     {
-        return $this->belongsTo(Organization::class);
+        return $this->belongsTo(Event::class);
     }
 
     public function getNameAttribute()
