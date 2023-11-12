@@ -16,7 +16,7 @@
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
         "league/glide-laravel": "^1.0",
-        "simplesoftwareio/simple-qrcode": "~4"
+        "bacon/bacon-qr-code": "^2.0"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
