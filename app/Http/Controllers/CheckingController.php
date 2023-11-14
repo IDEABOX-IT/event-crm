@@ -9,6 +9,12 @@ class CheckingController extends Controller
 {
     public function generateQrCode()
     {
+        // TODO FLOW
+        // Receive a webhook from stripe
+        // generate a QrCode with the webhook data
+        // save the QrCode in the storage
+        // sent email with the QrCode to customer
+        // return response to stripe ?
         $qrCodePath = 'public/qrCodes/make_me_qrcode.png';
         $this->createQrCode('make_me_qrcode', $qrCodePath);
     }
@@ -18,9 +24,17 @@ class CheckingController extends Controller
         QrCodeService::create($value, $qrCodePath);
     }
 
+    public function checkQrCode(): string
+    {
+        // TODO FLOW
+        // staff scan the QrCode
+        // check if the QrCode is valid or not ( one time use and not expired )
+        // return response to staff
+        return 'ok';
+    }
+
     public function getQrCode(): string
     {
-        //
         $qrCodePath = 'public/qrCodes/make_me_qrcode.png';
 
         if (Storage::exists($qrCodePath)) {

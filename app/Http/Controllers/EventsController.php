@@ -36,7 +36,7 @@ class EventsController extends Controller
 
     public function store()
     {
-        Auth::user()->account->events()->create(
+        Auth::user()->company->events()->create(
             Request::validate([
                 'name' => ['required', 'max:100'],
                 'email' => ['nullable', 'max:50', 'email'],
@@ -71,9 +71,9 @@ class EventsController extends Controller
         ]);
     }
 
-    public function update(Event $organization)
+    public function update(Event $event)
     {
-        $organization->update(
+        $event->update(
             Request::validate([
                 'name' => ['required', 'max:100'],
                 'email' => ['nullable', 'max:50', 'email'],
@@ -86,20 +86,20 @@ class EventsController extends Controller
             ])
         );
 
-        return Redirect::back()->with('success', 'Organization updated.');
+        return Redirect::back()->with('success', 'Evento atualizado.');
     }
 
-    public function destroy(Event $organization)
+    public function destroy(Event $event)
     {
-        $organization->delete();
+        $event->delete();
 
-        return Redirect::back()->with('success', 'Organization deleted.');
+        return Redirect::back()->with('success', 'Evento deletado.');
     }
 
-    public function restore(Event $organization)
+    public function restore(Event $event)
     {
-        $organization->restore();
+        $event->restore();
 
-        return Redirect::back()->with('success', 'Organization restored.');
+        return Redirect::back()->with('success', 'Evento restaurado.');
     }
 }

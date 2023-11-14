@@ -21,7 +21,7 @@
         <thead>
           <tr class="text-left font-bold">
             <th class="pb-4 pt-6 px-6">Nome</th>
-            <th class="pb-4 pt-6 px-6">Lugar</th>
+            <th class="pb-4 pt-6 px-6">Endereço</th>
             <th class="pb-4 pt-6 px-6" colspan="2">Contato</th>
           </tr>
         </thead>

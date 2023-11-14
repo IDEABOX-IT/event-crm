@@ -106,16 +106,16 @@ export default {
   },
   methods: {
     update() {
-      this.form.put(`/events/${this.organization.id}`)
+      this.form.put(`/events/${this.event.id}`)
     },
     destroy() {
       if (confirm('Tem certeza que deseja remover esse evento ?')) {
-        this.$inertia.delete(`/events/${this.organization.id}`)
+        this.$inertia.delete(`/events/${this.event.id}`)
       }
     },
     restore() {
       if (confirm('tem certeza que deseja restaurar esse evento ?')) {
-        this.$inertia.put(`/events/${this.organization.id}/restore`)
+        this.$inertia.put(`/events/${this.event.id}/restore`)
       }
     },
   },

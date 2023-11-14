@@ -11,11 +11,6 @@
           <option value="only">Não disponível</option>
         </select>
       </search-filter>
-<!--      TODO only if we need bank transfer we need to add customer manually-->
-<!--      <Link class="btn-indigo" href="/contacts/create">-->
-<!--        <span>Adicionar</span>-->
-<!--        <span class="hidden md:inline">&nbsp;Cliente</span>-->
-<!--      </Link>-->
     </div>
     <div class="bg-white rounded-md shadow overflow-x-auto">
       <table class="w-full whitespace-nowrap">
@@ -34,8 +29,8 @@
           </td>
           <td class="border-t">
             <Link class="flex items-center px-6 py-4" :href="`/contacts/${contact.id}/edit`" tabindex="-1">
-              <div v-if="contact.organization">
-                {{ contact.organization.name }}
+              <div v-if="contact.event">
+                {{ contact.event.name }}
               </div>
             </Link>
           </td>

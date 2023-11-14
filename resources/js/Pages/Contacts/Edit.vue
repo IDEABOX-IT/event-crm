@@ -55,7 +55,7 @@ export default {
   layout: Layout,
   props: {
     contact: Object,
-    organizations: Array,
+    events: Array,
   },
   remember: 'form',
   data() {
