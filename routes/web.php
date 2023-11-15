@@ -7,6 +7,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\EventsController;
 use App\Http\Controllers\ReportsController;
+use App\Http\Controllers\StripeWebhookController;
+use App\Http\Controllers\TicketsController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
 
@@ -151,3 +153,13 @@ Route::put('contacts/{contact}/restore', [ContactsController::class, 'restore'])
 Route::get('reports', [ReportsController::class, 'index'])
     ->name('reports')
     ->middleware('auth');
+
+// Send Ticket
+
+Route::get('tickets/{contact}', [TicketsController::class, 'sendTicket'])
+    ->name('sendTicket')
+    ->middleware('auth');
+
+// Stripe webhook
+Route::post('/stripe/webhook', [StripeWebhookController::class, 'handleWebhook'])->name('stripe.webhook');
+

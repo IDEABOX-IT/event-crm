@@ -51,7 +51,7 @@
           </td>
         </tr>
         <tr v-if="contacts.data.length === 0">
-          <td class="px-6 py-4 border-t" colspan="4">No contacts found.</td>
+          <td class="px-6 py-4 border-t" colspan="4">Nenhum cliente encontrado.</td>
         </tr>
       </table>
     </div>
