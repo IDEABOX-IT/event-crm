@@ -156,7 +156,7 @@ Route::get('reports', [ReportsController::class, 'index'])
 
 // Send Ticket
 
-Route::get('tickets/{contact}', [TicketsController::class, 'sendTicket'])
+Route::get('tickets/{contact}/{quantity}', [TicketsController::class, 'sendTicket'])
     ->name('sendTicket')
     ->middleware('auth');
 

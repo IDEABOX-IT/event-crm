@@ -16,7 +16,7 @@ class CreateContactsTable extends Migration
         Schema::create('contacts', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('company_id')->index();
-            $table->string('stripe_id', 255);
+            $table->string('stripe_id', 255)->nullable();
             $table->integer('event_id')->nullable()->index();
             $table->string('first_name', 25);
             $table->string('last_name', 25)->nullable();

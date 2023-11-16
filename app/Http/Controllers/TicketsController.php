@@ -5,19 +5,27 @@ namespace App\Http\Controllers;
 
 use App\Mail\SendTicket;
 use App\Models\Contact;
-use App\Services\QrCodeService;
+use App\Models\QrCode;
+use App\Services\TicketService;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 
 class TicketsController extends Controller
 {
-    public function sendTicket(Contact $contact)
+    public function sendTicket(Contact $contact, $quantity)
     {
-        $targetUser = $contact;
 
-        Mail::to('rijoedi@gmail.com')->send(new SendTicket($targetUser->first_name, '19:00', $targetUser->qrCodes));
+        TicketService::createTicket($contact, $quantity);
+
+        $qrCodes = QrCode::whereContactId($contact->id)->get();
+        Mail::to('rijoedi@gmail.com')->send(new SendTicket($contact, '19:00', $qrCodes));
 
         return Redirect::back()->with('success', 'Ticket enviado corretamente');
+    }
+
+    public function reSendTicket(Contact $contact, $ticketId)
+    {
+        $qrCodes = QrCode::whereContactId($contact->id)->get();
     }
 
 }

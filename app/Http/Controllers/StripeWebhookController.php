@@ -51,6 +51,7 @@ class StripeWebhookController extends Controller
 
                         $qrCodes = QrCode::whereContactId($res->id)->get();
 
+                        // TODO make to send email to client.
                         Mail::to('rijoedi@gmail.com')->send(new SendTicket($qrCodes, '19:00', $res));
 
                     } catch (Exception $e) {
