@@ -8,15 +8,17 @@
         "php": "^8.0.2",
         "ext-exif": "*",
         "ext-gd": "*",
+        "bacon/bacon-qr-code": "^2.0",
         "fakerphp/faker": "^1.9.1",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "inertiajs/inertia-laravel": "^0.6.4",
+        "intervention/image": "^2.7",
         "laravel/framework": "^8.65",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
         "league/glide-laravel": "^1.0",
-        "simplesoftwareio/simple-qrcode": "~4"
+        "stripe/stripe-php": "^13.3"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

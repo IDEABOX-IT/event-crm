@@ -1,11 +1,14 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\CheckingController;
 use App\Http\Controllers\ContactsController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\EventsController;
+use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\ReportsController;
+use App\Http\Controllers\StripeWebhookController;
+use App\Http\Controllers\TicketsController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +23,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Unauthenticated routes
+
 // Auth
 
 Route::get('login', [AuthenticatedSessionController::class, 'create'])
@@ -32,6 +37,20 @@ Route::post('login', [AuthenticatedSessionController::class, 'store'])
 
 Route::delete('logout', [AuthenticatedSessionController::class, 'destroy'])
     ->name('logout');
+
+// Images
+
+Route::get('/img/{path}', [ImagesController::class, 'show'])
+    ->where('path', '.*')
+    ->name('image');
+
+// QrCode
+// TODO route used only to check if QrCode its created or not
+Route::get('qrCode', [CheckingController::class, 'generateQrCode'])
+    ->name('qrcode');
+
+Route::get('getQrCode', [CheckingController::class, 'getQrCode'])
+    ->name('getQrCode');
 
 // Dashboard
 
@@ -135,8 +154,12 @@ Route::get('reports', [ReportsController::class, 'index'])
     ->name('reports')
     ->middleware('auth');
 
-// Images
+// Send Ticket
 
-Route::get('/img/{path}', [ImagesController::class, 'show'])
-    ->where('path', '.*')
-    ->name('image');
+Route::get('tickets/{contact}', [TicketsController::class, 'sendTicket'])
+    ->name('sendTicket')
+    ->middleware('auth');
+
+// Stripe webhook
+Route::post('/stripe/webhook', [StripeWebhookController::class, 'handleWebhook'])->name('stripe.webhook');
+

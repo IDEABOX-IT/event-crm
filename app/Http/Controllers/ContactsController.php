@@ -13,6 +13,8 @@ class ContactsController extends Controller
 {
     public function index()
     {
+
+
         return Inertia::render('Contacts/Index', [
             'filters' => Request::all('search', 'trashed'),
             'contacts' => Auth::user()->company->contacts()
@@ -27,7 +29,7 @@ class ContactsController extends Controller
                     'phone' => $contact->phone,
                     'city' => $contact->city,
                     'deleted_at' => $contact->deleted_at,
-                    'organization' => $contact->organization ? $contact->organization->only('name') : null,
+                    'event' => $contact->event ? $contact->event->only('name') : null,
                 ]),
         ]);
     }
@@ -50,7 +52,7 @@ class ContactsController extends Controller
             Request::validate([
                 'first_name' => ['required', 'max:50'],
                 'last_name' => ['required', 'max:50'],
-                'event_id' => ['nullable', Rule::exists('organizations', 'id')->where(function ($query) {
+                'event_id' => ['nullable', Rule::exists('events', 'id')->where(function ($query) {
                     $query->where('company_id', Auth::user()->company_id);
                 })],
                 'email' => ['nullable', 'max:50', 'email'],
@@ -83,7 +85,7 @@ class ContactsController extends Controller
                 'postal_code' => $contact->postal_code,
                 'deleted_at' => $contact->deleted_at,
             ],
-            'organizations' => Auth::user()->company->events()
+            'events' => Auth::user()->company->events()
                 ->orderBy('name')
                 ->get()
                 ->map
@@ -99,7 +101,7 @@ class ContactsController extends Controller
                 'last_name' => ['required', 'max:50'],
                 'event_id' => [
                     'nullable',
-                    Rule::exists('organizations', 'id')->where(fn ($query) => $query->where('company_id', Auth::user()->company_id)),
+                    Rule::exists('events', 'id')->where(fn ($query) => $query->where('company_id', Auth::user()->company_id)),
                 ],
                 'email' => ['nullable', 'max:50', 'email'],
                 'phone' => ['nullable', 'max:50'],
