@@ -156,8 +156,12 @@ Route::get('reports', [ReportsController::class, 'index'])
 
 // Send Ticket
 
-Route::get('tickets/{contact}/{quantity}', [TicketsController::class, 'sendTicket'])
-    ->name('sendTicket')
+Route::get('tickets/{contact}/{quantity}', [TicketsController::class, 'send'])
+    ->name('send')
+    ->middleware('auth');
+
+Route::get('tickets/resend/{contact}', [TicketsController::class, 'resend'])
+    ->name('resend')
     ->middleware('auth');
 
 // Stripe webhook

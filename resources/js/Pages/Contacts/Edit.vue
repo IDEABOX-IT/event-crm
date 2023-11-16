@@ -32,8 +32,12 @@
         </div>
       </form>
       <div class="flex items-center px-8 py-4 bg-gray-50 border-t border-gray-100">
-        <text-input v-model="quantity" class="pb-8 pr-6 w-full lg:w-1/2" label="Quantidade de Ingresso" />
+        <text-input v-model="quantity" class="pb-8 pr-6 w-full lg:w-1/2" label="Adicionar Ingresso" />
         <button class="btn-indigo ml-auto" @click="sendTicket">Enviar Ingresso</button>
+      </div>
+      <div class="flex items-center px-8 py-4 bg-gray-50 border-t border-gray-100">
+        <text-input v-model="this.qrCodes.length" disabled class="pb-8 pr-6 w-full lg:w-1/2" label="Ingressos emitidos" />
+        <button class="btn-indigo ml-auto" @click="ReSendTicket">Re enviar ingressos existentes</button>
       </div>
     </div>
   </div>
@@ -60,6 +64,7 @@ export default {
   props: {
     contact: Object,
     events: Array,
+    qrCodes: Array
   },
   remember: 'form',
   data() {
@@ -76,7 +81,8 @@ export default {
         country: this.contact.country,
         postal_code: this.contact.postal_code,
       }),
-      quantity: null
+      quantity: null,
+      numberOfTickets: this.contact
     }
   },
   methods: {
@@ -95,6 +101,9 @@ export default {
     },
     sendTicket() {
       this.$inertia.get(`/tickets/${this.contact.id}/${this.quantity}`)
+    },
+    ReSendTicket() {
+      this.$inertia.get(`/tickets/resend/${this.contact.id}`)
     },
   },
 }

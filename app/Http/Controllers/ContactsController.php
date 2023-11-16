@@ -90,6 +90,7 @@ class ContactsController extends Controller
                 ->get()
                 ->map
                 ->only('id', 'name'),
+            'qrCodes' => $contact->qrCode,
         ]);
     }
 
