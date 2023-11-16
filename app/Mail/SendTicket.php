@@ -16,11 +16,11 @@ class SendTicket extends Mailable
      *
      * @return void
      */
-    public function __construct($client_name, $time, $qrCodesPath)
+    public function __construct($client, $time, $qrCodePaths)
     {
-        $this->client_name = $client_name;
+        $this->client = $client;
         $this->time = $time;
-        $this->$qrCodesPath = $qrCodesPath;
+        $this->qrCodePaths = $qrCodePaths;
     }
 
     /**
@@ -32,9 +32,9 @@ class SendTicket extends Mailable
     {
         return $this->view('emails.tickets.sendTicket')
             ->with([
-                'client_name' => $this->client_name,
+                'client' => $this->client,
                 'time' => $this->time,
-                'qrCodes' => $this->$qrCodesPath,
+                'qrCodePaths' => $this->qrCodePaths,
             ])
             ->subject('【' . config('app.name') . '】チケットを送信しました');
     }

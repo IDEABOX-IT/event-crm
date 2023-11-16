@@ -4,7 +4,7 @@
     <title>Confirmação de Compra de Ingresso</title>
 </head>
 <body>
-<p>Caro(a) {{ $client_name }},</p>
+<p>Caro(a) {{ $client->first_name }},</p>
 
 <p>Queremos expressar nossa gratidão pela sua compra e por escolher nosso evento de stand-up para o seu entretenimento!
     Estamos ansiosos para compartilhar uma noite de risadas e diversão com você.</p>
@@ -19,10 +19,9 @@
 
 <p>Seu Ingresso:</p>
 
-@foreach($qrCodesPath as $qrCodePath)
+@foreach($qrCodePaths as $qrCodePath)
 
-    <img src="{{asset($qrCodePath)}}" alt="QR Code do Ingresso"
-         style="width: 100%; height: auto; margin-bottom: 20px;"
+    <img src="{{ asset($qrCodePath) }}" alt="QR Code">
 
 @endforeach
 

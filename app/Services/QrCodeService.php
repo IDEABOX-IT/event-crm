@@ -39,6 +39,14 @@ class QrCodeService
         Storage::put($qrCodePath, $writtenQrCode);
     }
 
+    public static function createPublicFolder(string $qrCodeText, string $qrCodePath): void
+    {
+        $qrCodeGenerator = new self();
+        $renderedQrCode = $qrCodeGenerator->renderQrCode();
+        $writtenQrCode = $qrCodeGenerator->writeQrCode($qrCodeText, $renderedQrCode);
+        Storage::disk('public')->put($qrCodePath, $writtenQrCode);
+    }
+
     public function renderQrCode(): GDLibRenderer
     {
         return new GDLibRenderer($this->size, 3, 'png', 3, $this->getQrCodeFill());

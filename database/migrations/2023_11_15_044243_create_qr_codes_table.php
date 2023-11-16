@@ -15,7 +15,7 @@ class CreateQrCodesTable extends Migration
     {
         Schema::create('qr_codes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('contact_id')->constrained('contacts');
+            $table->integer('contact_id');
             $table->string('qrCodePath');
             $table->boolean('isCheckinComplete')->default(false);
             $table->timestamps();

@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Company;
+use App\Mail\SendTicket;
+use App\Models\Contact;
 use App\Models\Event;
+use App\Models\QrCode;
+use App\Services\TicketService;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Stripe\Webhook;
 
 class StripeWebhookController extends Controller
@@ -23,22 +26,36 @@ class StripeWebhookController extends Controller
             // Handle specific Stripe event types here
             switch ($event->type) {
                 case 'checkout.session.completed':
-                    $company = Company::whereId(1)->first;
-                    $event = Event::wherePaymentLink($payload->data->payment_link)->first;
-                    $res = $company->contacts()->create([
-                        'first_name' => $payload->data->object->customer_details->name ?? null,
-                        'stripe_id' => $payload->data->customer,
-                        'event_id' => $event->id,
-                        'email' => $payload->data->object->customer_details->email ?? null,
-                        'phone' => $payload->data->object->customer_details->phone ?? null,
-                        'address' => $payload->data->object->customer_details->address->line1 ?? null,
-                        'city' => $payload->data->object->customer_details->address->city ?? null,
-                        'region' => $payload->data->object->customer_details->address->state ?? null,
-                        'country' => $payload->data->object->customer_details->address->country ?? null,
-                        'postal_code' => $payload->data->object->customer_details->address->postal_code ?? null,
-                    ]);
+                    try {
+                        $decoded = json_decode($payload);
 
-                    ray($res);
+                        $event = Event::wherePaymentLink($decoded->data->object->payment_link)->first();
+
+                        $res = Contact::create([
+                            'first_name' => $decoded->data->object->customer_details->name ?? null,
+                            'stripe_id' => $decoded->data->object->customer,
+                            'event_id' => $event->id,
+                            'company_id' => $event->company_id,
+                            'email' => $decoded->data->object->customer_details->email ?? null,
+                            'phone' => $decoded->data->object->customer_details->phone ?? null,
+                            'address' => $decoded->data->object->customer_details->address->line1 ?? null,
+                            'city' => $decoded->data->object->customer_details->address->city ?? null,
+                            'region' => $decoded->data->object->customer_details->address->state ?? null,
+                            'country' => $decoded->data->object->customer_details->address->country ?? null,
+                            'postal_code' => $decoded->data->object->customer_details->address->postal_code ?? null,
+                        ]);
+
+                        $quantity = $decoded->data->object->amount_subtotal / $event->price;
+
+                        TicketService::createTicket($res, $quantity);
+
+                        $qrCodes = QrCode::whereContactId($res->id)->get();
+
+                        Mail::to('rijoedi@gmail.com')->send(new SendTicket($qrCodes, '19:00', $res));
+
+                    } catch (Exception $e) {
+                        Log::error($e->getMessage());
+                    }
                     break;
                 case 'payment_intent.succeeded':
                     // Handle payment success
@@ -46,7 +63,6 @@ class StripeWebhookController extends Controller
                 default:
                     // Handle other event types or ignore them
             }
-
             return response()->json(['message' => 'Webhook received and processed.']);
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
