@@ -21,7 +21,7 @@
 
 @foreach($qrCodePaths as $qrCodePath)
 
-    <img src="{{ $message->embed(public_path() . $qrCodePath) }}" alt="QR Code">
+    <img src="{{ $message->embed(public_path() . '/' . $qrCode->qrCodePath) }}" width="200" height="200" alt="QR Code">
 
 @endforeach
 
