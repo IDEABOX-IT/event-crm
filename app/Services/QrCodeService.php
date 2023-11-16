@@ -44,7 +44,7 @@ class QrCodeService
         $qrCodeGenerator = new self();
         $renderedQrCode = $qrCodeGenerator->renderQrCode();
         $writtenQrCode = $qrCodeGenerator->writeQrCode($qrCodeText, $renderedQrCode);
-        Storage::disk('public')->put($qrCodePath, $writtenQrCode);
+        Storage::disk('root_public')->put($qrCodePath, $writtenQrCode);
     }
 
     public function renderQrCode(): GDLibRenderer
