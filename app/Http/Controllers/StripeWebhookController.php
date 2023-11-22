@@ -47,9 +47,11 @@ class StripeWebhookController extends Controller
 
                         $quantity = $decoded->data->object->amount_subtotal / $event->price;
 
-                        TicketService::createTicket($res, $quantity);
+                        $generatedTicketPaths = TicketService::createTickets($res, $quantity);
 
-                        $qrCodes = QrCode::whereContactId($res->id)->get();
+                        $qrCodes = QrCode::whereIn('qrCodePath', $generatedTicketPaths)->get();
+
+                        Mail::to($res->email)->send(new SendTicket($res, '19:00', $qrCodes));
 
                         // TODO make to send email to client.
                         Mail::to('rijoedi@gmail.com')->send(new SendTicket($qrCodes, '19:00', $res));

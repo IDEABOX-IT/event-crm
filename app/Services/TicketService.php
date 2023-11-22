@@ -4,24 +4,33 @@ namespace App\Services;
 
 use App\Models\Contact;
 use App\Models\QrCode;
-use Faker\Provider\File;
+use DateTime;
 
 class TicketService
 {
 
-    static function createTicket(Contact $contact, int $quantity): void
+    static function createTickets(Contact $contact, int $quantity): array
     {
-        $encryptedContactId = md5($contact->id . $contact->created_at);
+        $ticketList = [];
 
-        $path = 'images/qrCodes/' . $encryptedContactId  . '.png';
+        for ($i = 0; $i < $quantity; $i++) {
+            $currentDateTime = new DateTime();
+            $currentDateTimeString = $currentDateTime->format('Y-m-d H:i:s');
+            $encryptedContactId = md5($contact->id . $currentDateTimeString);
 
-        QrCodeService::createPublicFolder($encryptedContactId, $path);
+            $path = 'images/qrCodes/' . $encryptedContactId . '.png';
 
-        QrCode::create([
-            'contact_id' => $contact->id,
-            'qrCodePath' => $path,
-            'isCheckinComplete' => false,
-        ]);
+            QrCodeService::createPublicFolder($encryptedContactId, $path);
 
+            QrCode::create([
+                'contact_id' => $contact->id,
+                'qrCodePath' => $path,
+                'isCheckinComplete' => false,
+            ]);
+
+            $ticketList[] = $path; // Adicione o nome do arquivo à lista
+        }
+
+        return $ticketList;
     }
 }

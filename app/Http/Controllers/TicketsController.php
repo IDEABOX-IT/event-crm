@@ -12,21 +12,22 @@ use Illuminate\Support\Facades\Redirect;
 
 class TicketsController extends Controller
 {
-    public function resend(Contact $contact, $ticketId)
+    public function send(Contact $contact, $quantity)
     {
-        $qrCodes = QrCode::whereContactId($contact->id)->get();
+
+        $generatedTicketPaths = TicketService::createTickets($contact, $quantity);
+
+        $qrCodes = QrCode::whereIn('qrCodePath', $generatedTicketPaths)->get();
 
         Mail::to($contact->email)->send(new SendTicket($contact, '19:00', $qrCodes));
 
         return Redirect::back()->with('success', 'Ticket enviado corretamente');
     }
 
-    public function send(Contact $contact, $quantity)
+    public function resend(Contact $contact)
     {
-
-        TicketService::createTicket($contact, $quantity);
-
         $qrCodes = QrCode::whereContactId($contact->id)->get();
+
         Mail::to($contact->email)->send(new SendTicket($contact, '19:00', $qrCodes));
 
         return Redirect::back()->with('success', 'Ticket enviado corretamente');
