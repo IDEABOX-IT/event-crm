@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\QrCode;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
@@ -54,6 +55,9 @@ class EventsController extends Controller
 
     public function edit(Event $event)
     {
+
+        $qrCodes = QrCode::whereEventId($event->id)->with(['contact'])->get();
+
         return Inertia::render('Events/Edit', [
             'event' => [
                 'id' => $event->id,
@@ -66,7 +70,20 @@ class EventsController extends Controller
                 'country' => $event->country,
                 'postal_code' => $event->postal_code,
                 'deleted_at' => $event->deleted_at,
-                'contacts' => $event->contacts()->orderByName()->get()->map->only('id', 'name', 'city', 'phone'),
+                'contacts' => $qrCodes->map(function ($qrCode) {
+                    return [
+                        'id' => $qrCode->contact->id,
+                        'name' => $qrCode->contact->name,
+                        'email' => $qrCode->contact->email,
+                        'phone' => $qrCode->contact->phone,
+                        'address' => $qrCode->contact->address,
+                        'city' => $qrCode->contact->city,
+                        'region' => $qrCode->contact->region,
+                        'country' => $qrCode->contact->country,
+                        'postal_code' => $qrCode->contact->postal_code,
+                        'deleted_at' => $qrCode->contact->deleted_at,
+                    ];
+                })
             ],
         ]);
     }
