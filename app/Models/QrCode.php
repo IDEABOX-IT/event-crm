@@ -12,11 +12,16 @@ class QrCode extends Model
     protected $fillable = [
         'contact_id',
         'qrCodePath',
+        'event_id',
         'isCheckinComplete',
     ];
 
     public function contact()
     {
         return $this->belongsTo(Contact::class);
+    }
+    public function event()
+    {
+        return $this->belongsTo(Event::class);
     }
 }

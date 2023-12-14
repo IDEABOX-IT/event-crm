@@ -18,7 +18,6 @@ class ContactsController extends Controller
         return Inertia::render('Contacts/Index', [
             'filters' => Request::all('search', 'trashed'),
             'contacts' => Auth::user()->company->contacts()
-                ->with('event')
                 ->orderByName()
                 ->filter(Request::only('search', 'trashed'))
                 ->paginate(10)

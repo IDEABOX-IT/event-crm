@@ -9,7 +9,7 @@ use DateTime;
 class TicketService
 {
 
-    static function createTickets(Contact $contact, int $quantity): array
+    static function createTickets(Contact $contact, int $quantity, int $event_id): array
     {
         $ticketList = [];
 
@@ -25,6 +25,7 @@ class TicketService
             QrCode::create([
                 'contact_id' => $contact->id,
                 'qrCodePath' => $path,
+                'event_id' => $event_id,
                 'isCheckinComplete' => false,
             ]);
 

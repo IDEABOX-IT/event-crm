@@ -12,23 +12,36 @@ use Illuminate\Support\Facades\Redirect;
 
 class TicketsController extends Controller
 {
-    public function send(Contact $contact, $quantity)
+    public function send(Contact $contact, $quantity, $event_id)
     {
 
-        $generatedTicketPaths = TicketService::createTickets($contact, $quantity);
+        $generatedTicketPaths = TicketService::createTickets($contact, $quantity, $event_id);
 
-        $qrCodes = QrCode::whereIn('qrCodePath', $generatedTicketPaths)->get();
+        $qrCodes = QrCode::whereIn('qrCodePath', $generatedTicketPaths)->with(['event'])->get();
+        $event = $qrCodes->first()->event;
 
-        Mail::to($contact->email)->send(new SendTicket($contact, '19:00', $qrCodes));
+        Mail::to($contact->email)->send(new SendTicket($contact, $event->time, $qrCodes));
 
         return Redirect::back()->with('success', 'Ticket enviado corretamente');
     }
 
     public function resend(Contact $contact)
     {
-        $qrCodes = QrCode::whereContactId($contact->id)->get();
+        $qrCodes = QrCode::whereContactId($contact->id)->with(['event'])->get();
 
-        Mail::to($contact->email)->send(new SendTicket($contact, '19:00', $qrCodes));
+        $events = $qrCodes->map(function ($qrCode) {
+            return $qrCode->event;
+        });
+
+        $qrCodesByEvents = $events->map(function ($event) use ($qrCodes) {
+            return $qrCodes->where('event_id', $event->id);
+        });
+
+        $qrCodesByEvents = $qrCodesByEvents->unique();
+
+        foreach ($qrCodesByEvents as $qrCodes) {
+            Mail::to($contact->email)->send(new SendTicket($contact, $qrCodes->first()->event->time, $qrCodes));
+        }
 
         return Redirect::back()->with('success', 'Ticket enviado corretamente');
     }

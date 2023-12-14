@@ -155,9 +155,10 @@ Route::put('contacts/{contact}/restore', [ContactsController::class, 'restore'])
 
 // Send Ticket
 
-Route::get('tickets/{contact}/{quantity}', [TicketsController::class, 'send'])
+Route::get('tickets/{contact}/{quantity}/{event_id}', [TicketsController::class, 'send'])
     ->name('send')
     ->middleware('auth');
+
 
 Route::get('tickets/{contact}', [TicketsController::class, 'resend'])
     ->name('resend')

@@ -16,9 +16,9 @@ class Event extends Model
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
     }
 
-    public function contacts()
+    public function event()
     {
-        return $this->hasMany(Contact::class);
+        return $this->hasMany(Event::class);
     }
 
     public function scopeFilter($query, array $filters)

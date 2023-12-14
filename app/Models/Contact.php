@@ -16,11 +16,6 @@ class Contact extends Model
         return $this->where($field ?? 'id', $value)->withTrashed()->firstOrFail();
     }
 
-    public function event()
-    {
-        return $this->belongsTo(Event::class);
-    }
-
     public function getNameAttribute()
     {
         return $this->first_name.' '.$this->last_name;

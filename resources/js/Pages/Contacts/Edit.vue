@@ -12,10 +12,6 @@
         <div class="flex flex-wrap -mb-8 -mr-6 p-8">
           <text-input v-model="form.first_name" :error="form.errors.first_name" class="pb-8 pr-6 w-full lg:w-1/2" label="Nome" />
           <text-input v-model="form.last_name" :error="form.errors.last_name" class="pb-8 pr-6 w-full lg:w-1/2" label="Sobrenome" />
-          <select-input v-model="form.event_id" :error="form.errors.event_id" class="pb-8 pr-6 w-full lg:w-1/2" label="Evento">
-            <option :value="null" />
-            <option v-for="event in events" :key="event.id" :value="event.id">{{ event.name }}</option>
-          </select-input>
           <text-input v-model="form.email" :error="form.errors.email" class="pb-8 pr-6 w-full lg:w-1/2" label="Email" />
           <text-input v-model="form.phone" :error="form.errors.phone" class="pb-8 pr-6 w-full lg:w-1/2" label="Contato" />
           <text-input v-model="form.address" :error="form.errors.address" class="pb-8 pr-6 w-full lg:w-1/2" label="Endereço" />
@@ -32,6 +28,10 @@
         </div>
       </form>
       <div class="flex items-center px-8 py-4 bg-gray-50 border-t border-gray-100">
+        <select-input v-model="event_id"  class="pb-8 pr-6 w-full lg:w-1/2" label="Evento">
+          <option :value="null" />
+          <option v-for="event in events" :key="event.id" :value="event.id">{{ event.name }}</option>
+        </select-input>
         <text-input v-model="quantity" class="pb-8 pr-6 w-full lg:w-1/2" label="Adicionar Ingresso" />
         <button class="btn-indigo ml-auto" @click="sendTicket">Enviar Ingresso</button>
       </div>
@@ -72,7 +72,6 @@ export default {
       form: this.$inertia.form({
         first_name: this.contact.first_name,
         last_name: this.contact.last_name,
-        event_id: this.contact.event_id,
         email: this.contact.email,
         phone: this.contact.phone,
         address: this.contact.address,
@@ -82,6 +81,7 @@ export default {
         postal_code: this.contact.postal_code,
       }),
       quantity: null,
+      event_id: null,
       numberOfTickets: this.contact
     }
   },
@@ -100,8 +100,9 @@ export default {
       }
     },
     sendTicket() {
-      this.$inertia.get(`/tickets/${this.contact.id}/${this.quantity}`)
+      this.$inertia.get(`/tickets/${this.contact.id}/${this.quantity}/${this.event_id}`)
     },
+
     reSendTicket() {
       this.$inertia.get(`/tickets/${this.contact.id}`)
     },
