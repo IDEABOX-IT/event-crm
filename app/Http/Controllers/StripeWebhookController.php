@@ -31,30 +31,31 @@ class StripeWebhookController extends Controller
 
                         $event = Event::wherePaymentLink($decoded->data->object->payment_link)->first();
 
-                        $res = Contact::create([
-                            'first_name' => $decoded->data->object->customer_details->name ?? null,
-                            'stripe_id' => $decoded->data->object->customer,
-                            'event_id' => $event->id,
-                            'company_id' => $event->company_id,
-                            'email' => $decoded->data->object->customer_details->email ?? null,
-                            'phone' => $decoded->data->object->customer_details->phone ?? null,
-                            'address' => $decoded->data->object->customer_details->address->line1 ?? null,
-                            'city' => $decoded->data->object->customer_details->address->city ?? null,
-                            'region' => $decoded->data->object->customer_details->address->state ?? null,
-                            'country' => $decoded->data->object->customer_details->address->country ?? null,
-                            'postal_code' => $decoded->data->object->customer_details->address->postal_code ?? null,
-                        ]);
+                        $res = Contact::whereEmail($decoded->data->object->customer_details->email)->first();
+
+                        if (!$res) {
+                            $res = Contact::create([
+                                'first_name' => $decoded->data->object->customer_details->name ?? null,
+                                'stripe_id' => $decoded->data->object->customer,
+                                'event_id' => $event->id,
+                                'company_id' => $event->company_id,
+                                'email' => $decoded->data->object->customer_details->email ?? null,
+                                'phone' => $decoded->data->object->customer_details->phone ?? null,
+                                'address' => $decoded->data->object->customer_details->address->line1 ?? null,
+                                'city' => $decoded->data->object->customer_details->address->city ?? null,
+                                'region' => $decoded->data->object->customer_details->address->state ?? null,
+                                'country' => $decoded->data->object->customer_details->address->country ?? null,
+                                'postal_code' => $decoded->data->object->customer_details->address->postal_code ?? null,
+                            ]);
+                        }
 
                         $quantity = $decoded->data->object->amount_subtotal / $event->price;
-
-                        $generatedTicketPaths = TicketService::createTickets($res, $quantity);
-
-                        $qrCodes = QrCode::whereIn('qrCodePath', $generatedTicketPaths)->get();
-
-                        Mail::to($res->email)->send(new SendTicket($res, '19:00', $qrCodes));
+                        $event = Event::wherePaymentLink($decoded->data->object->payment_link)->first();
+                        $generatedTicketPaths = TicketService::createTickets($res, $quantity, $event->id);
+                        $qrCodes = QrCode::whereIn('qrCodePath', $generatedTicketPaths)->with(['event'])->get();
 
                         // TODO make to send email to client.
-                        Mail::to('rijoedi@gmail.com')->send(new SendTicket($qrCodes, '19:00', $res));
+                        Mail::to($res->email)->send(new SendTicket($qrCodes, $qrCodes->first()->event->time, $res));
 
                     } catch (Exception $e) {
                         Log::error($e->getMessage());
