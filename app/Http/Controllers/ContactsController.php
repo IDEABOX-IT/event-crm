@@ -13,8 +13,6 @@ class ContactsController extends Controller
 {
     public function index()
     {
-
-
         return Inertia::render('Contacts/Index', [
             'filters' => Request::all('search', 'trashed'),
             'contacts' => Auth::user()->company->contacts()
@@ -26,6 +24,7 @@ class ContactsController extends Controller
                     'id' => $contact->id,
                     'name' => $contact->name,
                     'phone' => $contact->phone,
+                    'email' => $contact->email,
                     'city' => $contact->city,
                     'deleted_at' => $contact->deleted_at,
                     'event' => $contact->event ? $contact->event->only('name') : null,

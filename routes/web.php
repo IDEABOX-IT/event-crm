@@ -6,7 +6,6 @@ use App\Http\Controllers\ContactsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventsController;
 use App\Http\Controllers\ImagesController;
-use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\TicketsController;
 use App\Http\Controllers\UsersController;
@@ -167,3 +166,11 @@ Route::get('tickets/{contact}', [TicketsController::class, 'resend'])
 // Stripe webhook
 Route::post('/stripe/webhook', [StripeWebhookController::class, 'handleWebhook'])->name('stripe.webhook');
 
+// Qr coder checker
+Route::get('/checkTicket', [TicketsController::class, 'checkTicket']);
+
+// Qr coder detail
+Route::get('/checkTicketResult/{qrCodeText}', [TicketsController::class, 'checkTicketResult']);
+
+// Qr coder confirm
+Route::post('/confirmQrCode', [TicketsController::class, 'confirmQrCode']);

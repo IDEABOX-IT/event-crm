@@ -9,6 +9,8 @@ use App\Models\QrCode;
 use App\Services\TicketService;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Request;
+use Inertia\Inertia;
 
 class TicketsController extends Controller
 {
@@ -44,6 +46,41 @@ class TicketsController extends Controller
         }
 
         return Redirect::back()->with('success', 'Ticket enviado corretamente');
+    }
+
+    public function checkTicket()
+    {
+        return Inertia::render('Events/QrCodeChecker');
+    }
+
+    public function checkTicketResult(Request $request, $qrCodeText)
+    {
+        $path = 'images/qrCodes/' . $qrCodeText . '.png';
+        $qrCode = QrCode::where('qrCodePath', $path)->first();
+        $contact = Contact::whereId($qrCode->contact_id)->first();
+        $event = $qrCode->event;
+
+        return Inertia::render('Events/QrCodeConfirm', [
+            'contact' => $contact,
+            'event' => $event,
+            'qrCode' => $qrCode,
+        ]);
+    }
+
+    public function confirmQrCode(QrCode $qrCode)
+    {
+        $qrCodeId = Request::get('id');
+        $qrCode = QrCode::whereId($qrCodeId)->first();
+
+        if($qrCode->isCheckinComplete){
+            return Redirect::back()->with('error', 'check-in já foi realizado');
+        }
+
+        $qrCode->isCheckinComplete = true;
+        $qrCode->save();
+
+        return Inertia::render('Events/QrCodeChecker');
+
     }
 
 }
