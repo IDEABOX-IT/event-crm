@@ -28,16 +28,14 @@ class StripeWebhookController extends Controller
                 case 'checkout.session.completed':
                     try {
                         $decoded = json_decode($payload);
-
+                        $decoded->data->object->payment_link = 'plink_1OBGM6Ls4BgVZmB8J70Um0De';
                         $event = Event::wherePaymentLink($decoded->data->object->payment_link)->first();
-
                         $res = Contact::whereEmail($decoded->data->object->customer_details->email)->first();
 
                         if (!$res) {
                             $res = Contact::create([
                                 'first_name' => $decoded->data->object->customer_details->name ?? null,
                                 'stripe_id' => $decoded->data->object->customer,
-                                'event_id' => $event->id,
                                 'company_id' => $event->company_id,
                                 'email' => $decoded->data->object->customer_details->email ?? null,
                                 'phone' => $decoded->data->object->customer_details->phone ?? null,
@@ -55,7 +53,7 @@ class StripeWebhookController extends Controller
                         $qrCodes = QrCode::whereIn('qrCodePath', $generatedTicketPaths)->with(['event'])->get();
 
                         // TODO make to send email to client.
-                        Mail::to($res->email)->send(new SendTicket($qrCodes, $qrCodes->first()->event->time, $res));
+                        Mail::to($res->email)->send(new SendTicket($res, $qrCodes->first()->event->time, $qrCodes));
 
                     } catch (Exception $e) {
                         Log::error($e->getMessage());
