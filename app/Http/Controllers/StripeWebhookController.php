@@ -20,7 +20,6 @@ class StripeWebhookController extends Controller
     {
         try {
             $payload = $request->getContent();
-
             $event = Webhook::constructEvent($payload, $request->header('stripe-signature'), env('STRIPE_WEBHOOK_SECRET'));
 
             // Handle specific Stripe event types here
@@ -28,7 +27,6 @@ class StripeWebhookController extends Controller
                 case 'checkout.session.completed':
                     try {
                         $decoded = json_decode($payload);
-                        $decoded->data->object->payment_link = 'plink_1OBGM6Ls4BgVZmB8J70Um0De';
                         $event = Event::wherePaymentLink($decoded->data->object->payment_link)->first();
                         $res = Contact::whereEmail($decoded->data->object->customer_details->email)->first();
 
